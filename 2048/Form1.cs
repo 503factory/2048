@@ -12,6 +12,7 @@ namespace _2048
 {
     public partial class Form1 : Form
     {
+        private int _mouvements = 0;
         public Form1()
         {
             InitializeComponent();
@@ -32,17 +33,24 @@ namespace _2048
 
         private void LabelEtat_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Version 1.0");
+            MessageEtat("Version 1.0");
         }
 
         private void NouveauJeu_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Nouvelle partie");
+            MessageEtat("Nouvelle partie");
+            LabelMouvement.Text = _mouvements.ToString();
         }
 
         private void Jeu_KeyDown(object sender, KeyEventArgs e)
         {
-            MessageBox.Show($"touche {Direction(e)}");
+            Sens touche = Direction(e);
+            MessageEtat($"touche {touche}");
+            if (touche != Sens.autre)
+            {
+                _mouvements += 1;
+                LabelMouvement.Text = _mouvements.ToString();
+            }
         }
         private Sens Direction(KeyEventArgs e)
         {
@@ -70,5 +78,15 @@ namespace _2048
                     }
             }
         }
+        private void MessageEtat(string message)
+        { LabelEtat.Text = message; }
+
+        private void Jeu_FormClosing_1(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel =
+                      MessageBox.Show(
+                          String.Format("fermeture de l'application pour {0}. Voulez-vous quitter?" , e.CloseReason), "fermeture...", MessageBoxButtons.YesNo) == DialogResult.No;
+        }
     }
+
 }
