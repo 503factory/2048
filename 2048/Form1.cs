@@ -27,8 +27,10 @@ namespace _2048
             autre
         }
         private void Form1_Load(object sender, EventArgs e)
-        {
-
+                    {
+            Cases20.Text = "4";
+            Cases20.BackColor = Color.Aquamarine;
+                
         }
 
         private void LabelEtat_Click(object sender, EventArgs e)
