@@ -13,6 +13,9 @@ namespace _2048
     public partial class Form1 : Form
     {
         private int _mouvements = 0;
+        private int[,] _case = new int[4, 4];
+        
+       
         public Form1()
         {
             InitializeComponent();
@@ -28,8 +31,10 @@ namespace _2048
         }
         private void Form1_Load(object sender, EventArgs e)
                     {
-            Cases20.Text = "4";
-            Cases20.BackColor = Color.Aquamarine;
+            
+            
+
+            
                 
         }
 
@@ -42,6 +47,9 @@ namespace _2048
         {
             MessageEtat("Nouvelle partie");
             LabelMouvement.Text = _mouvements.ToString();
+            _case[2, 0] = 4;
+            Cases20.Text = _case[2, 0].ToString();
+
         }
 
         private void Jeu_KeyDown(object sender, KeyEventArgs e)
@@ -89,6 +97,10 @@ namespace _2048
                       MessageBox.Show(
                           String.Format("fermeture de l'application pour {0}. Voulez-vous quitter?" , e.CloseReason), "fermeture...", MessageBoxButtons.YesNo) == DialogResult.No;
         }
+    
+
+
     }
+
 
 }
