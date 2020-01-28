@@ -49,7 +49,8 @@ namespace _2048
             LabelMouvement.Text = _mouvements.ToString();
             _case[2, 0] = 4;
             Cases20.Text = _case[2, 0].ToString();
-
+            Cases20.BackColor = Outils.Couleurs(_case[2, 0])["fond"];
+            Cases20.ForeColor = Outils.Couleurs(_case[2, 0])["fonte"];
         }
 
         private void Jeu_KeyDown(object sender, KeyEventArgs e)
