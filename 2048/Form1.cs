@@ -31,12 +31,11 @@ namespace _2048
         }
         private void Form1_Load(object sender, EventArgs e)
                     {
-            
-            
-
-            
-                
-        }
+            log4net.GlobalContext.Properties["fichierLog"] =
+                $"C:\\Users\\{ Environment.UserName}\\AppData\\Local\\temp\\2048.log";
+            log4net.Config.XmlConfigurator.Configure();
+            Logs.Debug("Debut du programme");
+                    }
 
         private void LabelEtat_Click(object sender, EventArgs e)
         {
@@ -45,12 +44,12 @@ namespace _2048
 
         private void NouveauJeu_Click(object sender, EventArgs e)
         {
+            //Logs.Warn("Nouvelle partie");
             MessageEtat("Nouvelle partie");
-            LabelMouvement.Text = _mouvements.ToString();
             _case[2, 0] = 4;
-            Cases20.Text = _case[2, 0].ToString();
-            Cases20.BackColor = Outils.Couleurs(_case[2, 0])["fond"];
-            Cases20.ForeColor = Outils.Couleurs(_case[2, 0])["fonte"];
+            _case[1, 1] = 2;
+            _case[3, 3] = 2;
+            Affiche(); 
         }
 
         private void Jeu_KeyDown(object sender, KeyEventArgs e)
@@ -98,10 +97,104 @@ namespace _2048
                       MessageBox.Show(
                           String.Format("fermeture de l'application pour {0}. Voulez-vous quitter?" , e.CloseReason), "fermeture...", MessageBoxButtons.YesNo) == DialogResult.No;
         }
-    
+        
+        private void Affiche(int x, int y)
+        {
+            var ctrl = Grille.Controls.Find($"Case{x}{y}", true)[0];
+            ctrl.Text = (_case[x, y] == 0) ? "" : _case[x, y].ToString();
+            var couleur = Outils.Couleurs(_case[x, y]);
+            ctrl.BackColor = couleur["fond"];
+            ctrl.ForeColor = couleur["fonte"];
+        }
+        private void Affiche()
+        {
+            for (int i = 0; i <= 3; i += 1)
+            {
+                for (int j = 0; j <= 3; j += 1)
+                {
+                    Affiche(i, j);
+                }
+            }
+            LabelMouvement.Text = _mouvements.ToString();
+        }
 
+        private bool Bouge(Sens s)
+        {
+            bool caseDeplacee = false;
 
+            switch (s)
+            {
+                case Sens.droite:
+                    // pour chaque ligne
+                    for (int j = 0; j <= 3; j += 1)
+                    {
+                        // pour chaque colonne
+                        for (int i = 2; i >= 0; i -= 1)
+                        {
+                            if ((_case[i + 1, j] == 0) && (_case[i, j] != 0))
+                            {
+                                _case[i + 1, j] = _case[i, j];
+                                _case[i, j] = 0;
+                                caseDeplacee = true;
+                               Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                            }
+                        }
+                    }
+                    break;
+                case Sens.gauche:
+                    // pour chaque ligne
+                    for (int j = 0; j <= 3; j += 1)
+                    {
+                        // pour chaque colonne
+                        for (int i = 1; i <= 3; i += 1)
+                        {
+                            if ((_case[i - 1, j] == 0) && (_case[i, j] != 0))
+                            {
+                                _case[i - 1, j] = _case[i, j];
+                                _case[i, j] = 0;
+                                caseDeplacee = true;
+                               Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                            }
+                        }
+                    }
+                    break;
+                case Sens.bas:
+                    // pour chaque ligne
+                    for (int j = 2; j >= 0; j -= 1)
+                    {
+                        // pour chaque colonne
+                        for (int i = 0; i <= 3; i += 1)
+                        {
+                            if ((_case[i, j + 1] == 0) && (_case[i, j] != 0))
+                            {
+                                _case[i, j + 1] = _case[i, j];
+                                _case[i, j] = 0;
+                                caseDeplacee = true;
+                                Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                            }
+                        }
+                    }
+                    break;
+                case Sens.haut:
+                    // pour chaque ligne
+                    for (int j = 1; j <= 3; j += 1)
+                    {
+                        // pour chaque colonne
+                        for (int i = 0; i <= 3; i += 1)
+                        {
+                            if ((_case[i, j - 1] == 0) && (_case[i, j] != 0))
+                            {
+                                _case[i, j - 1] = _case[i, j];
+                                _case[i, j] = 0;
+                                caseDeplacee = true;
+                                Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                            }
+                        }
+                    }
+                    break;
+            }
+            return caseDeplacee;
+        }
     }
-
-
 }
+    
