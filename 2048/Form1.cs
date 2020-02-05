@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace _2048
 {
     public partial class Form1 : Form
@@ -44,7 +45,7 @@ namespace _2048
 
         private void NouveauJeu_Click(object sender, EventArgs e)
         {
-            //Logs.Warn("Nouvelle partie");
+            Logs.Warn("Nouvelle partie");
             MessageEtat("Nouvelle partie");
             _case[2, 0] = 4;
             _case[1, 1] = 2;
@@ -100,7 +101,7 @@ namespace _2048
         
         private void Affiche(int x, int y)
         {
-            var ctrl = Grille.Controls.Find($"Case{x}{y}", true)[0];
+            var ctrl = Grille.Controls.Find($"Cases{x}{y}", true)[0];
             ctrl.Text = (_case[x, y] == 0) ? "" : _case[x, y].ToString();
             var couleur = Outils.Couleurs(_case[x, y]);
             ctrl.BackColor = couleur["fond"];
