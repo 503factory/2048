@@ -16,7 +16,6 @@ namespace _2048
         private int _mouvements = 0;
         private int[,] _case = new int[4, 4];
         
-       
         public Form1()
         {
             InitializeComponent();
@@ -31,12 +30,12 @@ namespace _2048
             autre
         }
         private void Form1_Load(object sender, EventArgs e)
-                    {
+        {
             log4net.GlobalContext.Properties["fichierLog"] =
                 $"C:\\Users\\{ Environment.UserName}\\AppData\\Local\\temp\\2048.log";
             log4net.Config.XmlConfigurator.Configure();
             Logs.Debug("Debut du programme");
-                    }
+        }
 
         private void LabelEtat_Click(object sender, EventArgs e)
         {
@@ -50,17 +49,17 @@ namespace _2048
             _case[2, 0] = 4;
             _case[1, 1] = 2;
             _case[3, 3] = 2;
-            Affiche(); 
+            Affiche();
         }
 
         private void Jeu_KeyDown(object sender, KeyEventArgs e)
         {
             Sens touche = Direction(e);
             MessageEtat($"touche {touche}");
-            if (touche != Sens.autre)
+            if (Bouge(touche))
             {
                 _mouvements += 1;
-                LabelMouvement.Text = _mouvements.ToString();
+                Affiche();
             }
         }
         private Sens Direction(KeyEventArgs e)
@@ -96,9 +95,10 @@ namespace _2048
         {
             e.Cancel =
                       MessageBox.Show(
-                          String.Format("fermeture de l'application pour {0}. Voulez-vous quitter?" , e.CloseReason), "fermeture...", MessageBoxButtons.YesNo) == DialogResult.No;
+                          String.Format("fermeture de l'application pour {0}. Voulez-vous quitter?", e.CloseReason), "fermeture...", MessageBoxButtons.YesNo) == DialogResult.No;
+            Logs.Debug("Fin du programme");
         }
-        
+
         private void Affiche(int x, int y)
         {
             var ctrl = Grille.Controls.Find($"Cases{x}{y}", true)[0];
@@ -121,80 +121,127 @@ namespace _2048
 
         private bool Bouge(Sens s)
         {
-            bool caseDeplacee = false;
+            bool changement = false;
 
             switch (s)
             {
                 case Sens.droite:
                     // pour chaque ligne
-                    for (int j = 0; j <= 3; j += 1)
+                    for (int j = 0; j <= 3; j++)
                     {
                         // pour chaque colonne
-                        for (int i = 2; i >= 0; i -= 1)
+                        for (int i = 2; i >= 0; i--)
                         {
-                            if ((_case[i + 1, j] == 0) && (_case[i, j] != 0))
+                            if (_case[i, j] != 0)
                             {
-                                _case[i + 1, j] = _case[i, j];
-                                _case[i, j] = 0;
-                                caseDeplacee = true;
-                               Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                                //avancer tant que possible
+                                int k = i;
+                                int liberte = i;
+                                do
+                                {
+                                    if (_case[k + 1, j] == 0) { liberte = k + 1; }
+                                    k += 1;
+                                } while ((k < 3) && (_case[k, j] == 0));
+                                if (liberte != i)
+                                {
+                                    _case[liberte, j] = _case[i, j];
+                                    _case[i, j] = 0;
+                                    changement = true;
+                                    Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                                }
                             }
                         }
                     }
-                    break;
+                    return changement;
+
                 case Sens.gauche:
                     // pour chaque ligne
-                    for (int j = 0; j <= 3; j += 1)
+                    for (int j = 0; j <= 3; j++)
                     {
                         // pour chaque colonne
-                        for (int i = 1; i <= 3; i += 1)
+                        for (int i = 2; i >= 0; i--)
                         {
-                            if ((_case[i - 1, j] == 0) && (_case[i, j] != 0))
+                            if (_case[i, j] != 0)
                             {
-                                _case[i - 1, j] = _case[i, j];
-                                _case[i, j] = 0;
-                                caseDeplacee = true;
-                               Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                                //avancer tant que possible
+                                int k = i;
+                                int liberte = i;
+                                do
+                                {
+                                    if (_case[k + 1, j] == 0) { liberte = k + 1; }
+                                    k += 1;
+                                } while ((k < 3) && (_case[k, j] == 0));
+                                if (liberte != i)
+                                {
+                                    _case[liberte, j] = _case[i, j];
+                                    _case[i, j] = 0;
+                                    changement = true;
+                                    Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                                }
                             }
                         }
                     }
-                    break;
+                    return changement;
+
                 case Sens.bas:
                     // pour chaque ligne
-                    for (int j = 2; j >= 0; j -= 1)
+                    for (int j = 0; j <= 3; j++)
                     {
                         // pour chaque colonne
-                        for (int i = 0; i <= 3; i += 1)
+                        for (int i = 2; i >= 0; i--)
                         {
-                            if ((_case[i, j + 1] == 0) && (_case[i, j] != 0))
+                            if (_case[i, j] != 0)
                             {
-                                _case[i, j + 1] = _case[i, j];
-                                _case[i, j] = 0;
-                                caseDeplacee = true;
-                                Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                                //avancer tant que possible
+                                int k = i;
+                                int liberte = i;
+                                do
+                                {
+                                    if (_case[k + 1, j] == 0) { liberte = k + 1; }
+                                    k += 1;
+                                } while ((k < 3) && (_case[k, j] == 0));
+                                if (liberte != i)
+                                {
+                                    _case[liberte, j] = _case[i, j];
+                                    _case[i, j] = 0;
+                                    changement = true;
+                                    Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                                }
                             }
                         }
                     }
-                    break;
+                    return changement;
+
                 case Sens.haut:
                     // pour chaque ligne
-                    for (int j = 1; j <= 3; j += 1)
+                    for (int j = 0; j <= 3; j++)
                     {
                         // pour chaque colonne
-                        for (int i = 0; i <= 3; i += 1)
+                        for (int i = 2; i >= 0; i--)
                         {
-                            if ((_case[i, j - 1] == 0) && (_case[i, j] != 0))
+                            if (_case[i, j] != 0)
                             {
-                                _case[i, j - 1] = _case[i, j];
-                                _case[i, j] = 0;
-                                caseDeplacee = true;
-                                Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                                //avancer tant que possible
+                                int k = i;
+                                int liberte = i;
+                                do
+                                {
+                                    if (_case[k + 1, j] == 0) { liberte = k + 1; }
+                                    k += 1;
+                                } while ((k < 3) && (_case[k, j] == 0));
+                                if (liberte != i)
+                                {
+                                    _case[liberte, j] = _case[i, j];
+                                    _case[i, j] = 0;
+                                    changement = true;
+                                    Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
+                                }
                             }
                         }
                     }
-                    break;
+                    return changement;
             }
-            return caseDeplacee;
+            return changement;
         }
     }
 }
