@@ -142,7 +142,7 @@ namespace _2048
                                     if (_case[k + 1, j] == 0) { liberte = k + 1; }
                                     k += 1;
                                 } while ((k < 3) && (_case[k, j] == 0));
-                                if (liberte != i)
+                                if (liberte !=i)
                                 {
                                     _case[liberte, j] = _case[i, j];
                                     _case[i, j] = 0;
@@ -159,7 +159,7 @@ namespace _2048
                     for (int j = 0; j <= 3; j++)
                     {
                         // pour chaque colonne
-                        for (int i = 2; i >= 0; i--)
+                        for (int i = 1; i <= 3; i++)
                         {
                             if (_case[i, j] != 0)
                             {
@@ -168,9 +168,9 @@ namespace _2048
                                 int liberte = i;
                                 do
                                 {
-                                    if (_case[k + 1, j] == 0) { liberte = k + 1; }
-                                    k += 1;
-                                } while ((k < 3) && (_case[k, j] == 0));
+                                    if (_case[k - 1, j] == 0) { liberte = k - 1; }
+                                    k -= 1;
+                                } while ((k > 0) && (_case[k, j] == 0));
                                 if (liberte != i)
                                 {
                                     _case[liberte, j] = _case[i, j];
@@ -185,24 +185,24 @@ namespace _2048
 
                 case Sens.bas:
                     // pour chaque ligne
-                    for (int j = 0; j <= 3; j++)
+                    for (int i = 0; i <= 3; i++)
                     {
                         // pour chaque colonne
-                        for (int i = 2; i >= 0; i--)
+                        for (int j = 2;j >= 0; j--)
                         {
                             if (_case[i, j] != 0)
                             {
                                 //avancer tant que possible
-                                int k = i;
-                                int liberte = i;
+                                int k = j;
+                                int liberte = j;
                                 do
                                 {
-                                    if (_case[k + 1, j] == 0) { liberte = k + 1; }
+                                    if (_case[i,k+1] == 0) { liberte = k + 1; }
                                     k += 1;
-                                } while ((k < 3) && (_case[k, j] == 0));
-                                if (liberte != i)
+                                } while ((k < 3) && (_case[i,k] == 0));
+                                if (liberte != j)
                                 {
-                                    _case[liberte, j] = _case[i, j];
+                                    _case[i,liberte] = _case[i, j];
                                     _case[i, j] = 0;
                                     changement = true;
                                     Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
@@ -214,24 +214,24 @@ namespace _2048
 
                 case Sens.haut:
                     // pour chaque ligne
-                    for (int j = 0; j <= 3; j++)
+                    for (int i = 0; i <= 3; i++)
                     {
                         // pour chaque colonne
-                        for (int i = 2; i >= 0; i--)
+                        for (int j = 1; j <= 3; j++)
                         {
                             if (_case[i, j] != 0)
                             {
                                 //avancer tant que possible
-                                int k = i;
-                                int liberte = i;
+                                int k =j;
+                                int liberte = j;
                                 do
                                 {
-                                    if (_case[k + 1, j] == 0) { liberte = k + 1; }
-                                    k += 1;
-                                } while ((k < 3) && (_case[k, j] == 0));
-                                if (liberte != i)
+                                    if (_case[i,k - 1] == 0) { liberte = k - 1; }
+                                    k -= 1;
+                                } while ((k > 0) && (_case[i,k] == 0));
+                                if (liberte != j)
                                 {
-                                    _case[liberte, j] = _case[i, j];
+                                    _case[i,liberte] = _case[i, j];
                                     _case[i, j] = 0;
                                     changement = true;
                                     Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
