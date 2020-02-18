@@ -14,6 +14,7 @@ namespace _2048
     public partial class Form1 : Form
     {
         private int _mouvements = 0;
+        private int _score = 0;
         private int[,] _case = new int[4, 4];
         
         public Form1()
@@ -32,7 +33,7 @@ namespace _2048
         private void Form1_Load(object sender, EventArgs e)
         {
             log4net.GlobalContext.Properties["fichierLog"] =
-                $"C:\\Users\\{ Environment.UserName}\\AppData\\Local\\temp\\2048.log";
+                $"C:\\Users\\{ Environment.UserName}\\Desktop\\2048.log";
             log4net.Config.XmlConfigurator.Configure();
             Logs.Debug("Debut du programme");
         }
@@ -46,6 +47,7 @@ namespace _2048
         {
             Logs.Warn("Nouvelle partie");
             MessageEtat("Nouvelle partie");
+            _case = new int[4, 4];
             _case[2, 0] = 4;
             _case[1, 1] = 2;
             _case[3, 3] = 2;
@@ -56,8 +58,10 @@ namespace _2048
         {
             Sens touche = Direction(e);
             MessageEtat($"touche {touche}");
-            if (Bouge(touche))
+            (bool changement, int points) = Bouge(touche);
+            if (changement)
             {
+                _score += points;
                 _mouvements += 1;
                 Affiche();
             }
@@ -117,11 +121,14 @@ namespace _2048
                 }
             }
             LabelMouvement.Text = _mouvements.ToString();
+            LabelScore.Text = _score.ToString();
         }
 
-        private bool Bouge(Sens s)
+        private (bool, int) Bouge(Sens s)
         {
             bool changement = false;
+            int points = 0;
+            bool[,] fusion = new bool[4, 4];
 
             switch (s)
             {
@@ -139,12 +146,24 @@ namespace _2048
                                 int liberte = i;
                                 do
                                 {
-                                    if (_case[k + 1, j] == 0) { liberte = k + 1; }
+                                    if ((_case[k + 1, j] == 0)
+                                    || (!fusion[k + 1, j] && (_case[k + 1, j] == _case[i, j])))
+                                    { liberte = k + 1; }
                                     k += 1;
                                 } while ((k < 3) && (_case[k, j] == 0));
                                 if (liberte !=i)
                                 {
-                                    _case[liberte, j] = _case[i, j];
+                                    if (_case[liberte, j] == 0)
+                                    {
+                                        _case[liberte, j] = _case[i, j];
+                                    }
+                                    else {
+                                        _case[liberte, j] *= 2;
+                                        points += _case[liberte, j];
+                                        fusion[liberte, j] = true;
+                                         }
+
+
                                     _case[i, j] = 0;
                                     changement = true;
                                     Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
@@ -152,7 +171,7 @@ namespace _2048
                             }
                         }
                     }
-                    return changement;
+                    return (changement,points);
 
                 case Sens.gauche:
                     // pour chaque ligne
@@ -181,7 +200,7 @@ namespace _2048
                             }
                         }
                     }
-                    return changement;
+                    return (changement, points);
 
                 case Sens.bas:
                     // pour chaque ligne
@@ -210,7 +229,7 @@ namespace _2048
                             }
                         }
                     }
-                    return changement;
+                    return (changement, points);
 
                 case Sens.haut:
                     // pour chaque ligne
@@ -239,9 +258,9 @@ namespace _2048
                             }
                         }
                     }
-                    return changement;
+                    return (changement, points);
             }
-            return changement;
+            return (changement, points);
         }
     }
 }
