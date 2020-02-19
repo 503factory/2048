@@ -48,7 +48,7 @@ namespace _2048
             Logs.Warn("Nouvelle partie");
             MessageEtat("Nouvelle partie");
             _case = new int[4, 4];
-            _case[2, 0] = 4;
+            _case[2, 0] = 2;
             _case[1, 1] = 2;
             _case[3, 3] = 2;
             Affiche();
@@ -187,12 +187,24 @@ namespace _2048
                                 int liberte = i;
                                 do
                                 {
-                                    if (_case[k - 1, j] == 0) { liberte = k - 1; }
+                                    if ((_case[k - 1, j] == 0)
+                                    || (!fusion[k - 1, j] && (_case[k - 1, j] == _case[i, j])))
+                                    { liberte = k - 1; }
                                     k -= 1;
                                 } while ((k > 0) && (_case[k, j] == 0));
                                 if (liberte != i)
                                 {
-                                    _case[liberte, j] = _case[i, j];
+                                    if (_case[liberte, j] == 0)
+                                    {
+                                        _case[liberte, j] = _case[i, j];
+                                    }
+                                    else 
+                                    {
+                                        _case[liberte, j] *= 2;
+                                        points += _case[liberte, j];
+                                        fusion[liberte, j] = true;
+                                    }
+
                                     _case[i, j] = 0;
                                     changement = true;
                                     Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
@@ -216,12 +228,26 @@ namespace _2048
                                 int liberte = j;
                                 do
                                 {
-                                    if (_case[i,k+1] == 0) { liberte = k + 1; }
+                                    if ((_case[i,k+1] == 0)
+                                        || (!fusion[i,k + 1] && (_case[i,k + 1] == _case[i, j])))
+
+
+                                    { 
+                                        liberte = k + 1; 
+                                    }
                                     k += 1;
                                 } while ((k < 3) && (_case[i,k] == 0));
                                 if (liberte != j)
                                 {
-                                    _case[i,liberte] = _case[i, j];
+                                        if (_case[i,liberte]==0)
+                                    {
+                                        _case[i, liberte] = _case[i, j];
+                                    }else
+                                    {
+                                        _case[i, liberte] *= 2;
+                                        points += _case[i, liberte];
+                                        fusion[i, liberte]=true;
+                                    }
                                     _case[i, j] = 0;
                                     changement = true;
                                     Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
@@ -245,12 +271,25 @@ namespace _2048
                                 int liberte = j;
                                 do
                                 {
-                                    if (_case[i,k - 1] == 0) { liberte = k - 1; }
+                                    if ((_case[i,k - 1] == 0)
+                                        || (!fusion[i,k - 1] && (_case[i,k - 1] == _case[i, j])))
+
+                                    { 
+                                        liberte = k - 1;
+                                    }
                                     k -= 1;
                                 } while ((k > 0) && (_case[i,k] == 0));
                                 if (liberte != j)
                                 {
-                                    _case[i,liberte] = _case[i, j];
+                                    if(_case[i,liberte]==0)
+                                    {
+                                        _case[i, liberte] = _case[i, j];
+                                    }else
+                                    {
+                                        _case[i, liberte] *= 2;
+                                        points += _case[i, liberte];
+                                        fusion[i, liberte] = true;
+                                    }
                                     _case[i, j] = 0;
                                     changement = true;
                                     Logs.Info($"déplacement à {s} : {_case[i, j]} de {i},{j}");
